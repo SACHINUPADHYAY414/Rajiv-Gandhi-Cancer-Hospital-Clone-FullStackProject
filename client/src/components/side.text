@@ -1,0 +1,143 @@
+
+
+
+import React, { useState } from 'react';
+import { NavLink,useNavigate} from 'react-router-dom';
+import { FaUserEdit } from "react-icons/fa";
+import { RiContactsBookUploadFill } from "react-icons/ri";
+import { HiNewspaper } from "react-icons/hi2";
+import { ImFolderDownload } from "react-icons/im";
+import { TbReportMedical } from "react-icons/tb";
+import { ImUsers } from "react-icons/im";
+import { FaUserDoctor } from "react-icons/fa6";
+import { MdOutlineMedicalInformation } from "react-icons/md";
+import { LuReceipt } from "react-icons/lu";
+import { GrDocumentDownload } from "react-icons/gr";
+import { RiBillFill } from "react-icons/ri";
+import { FaKey } from "react-icons/fa";
+import { TbUserOff } from "react-icons/tb";
+import { FaUserCircle } from "react-icons/fa";
+
+const Sidebar = ({ children }) => {
+  const [showMenu, setShowMenu] = useState(false);
+  const navigate = useNavigate();
+
+  const clickAccount = () => {
+    setShowMenu(!showMenu);
+  };
+
+  const handleLogout = () => {
+    // Handle logout logic here
+  };
+
+  const Dashboard = () => {
+    navigate("/Dashboard");
+  };
+  return (
+    <div className="h-full flex">
+      
+      
+      {/* Sidebar */}
+      <nav className=" h-full font-bold bg-gradient-to-l from-[#70e2be]  to-[#0ac269] to-90% ...0 shadow-lg text-white">
+        <ul className=" h-full bg-gradient-to-l from-[#70e2be]  to-[#0ac269] to-90% ...0 shadow-lg text-white">
+          <NavLink to="/Dashboard">
+          <li className=" flex items-center px-4 py-4  text-whiterounded-md hover:bg-gradient-to-r from-[#70e2be] to-[#0ac269]  hover:text-gray-800 transition-color cursor-pointer" >
+            <FaUserEdit  className="mr-2"/> 
+            Telemedicine Appointment
+            </li> 
+          </NavLink>
+
+          <NavLink to="/InPersonAppointment" >
+            <li className='flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer '>
+              <ImUsers className="mr-2" />
+              InPerson Appointment
+            </li>
+          </NavLink>
+
+            <NavLink to="/ViewRadiologyReports"  >
+            <li className="flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <HiNewspaper  className="mr-2"/>
+             View Radiology Reports
+            </li>
+            </NavLink>
+
+            <NavLink to="/ViewLabReports">
+            <li className="flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <TbReportMedical  className="mr-2" /> 
+            View Lab Reports
+            </li>
+            </NavLink>
+
+            <NavLink to="/ViewDischargeSummary">
+            <li className="flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <MdOutlineMedicalInformation  className="mr-2"/> 
+            View Discharge Summary
+            </li>
+            </NavLink>
+
+            <NavLink to="/DownloadPrescription">
+            <li className="flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <ImFolderDownload  className="mr-2" /> 
+            DownloadPrescription
+            </li>
+            </NavLink>
+
+            <NavLink to="/UploadDocument">
+            <li className="flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <RiContactsBookUploadFill  className="mr-2"/> 
+            Upload Document
+            </li>
+            </NavLink>
+
+            <NavLink to="/TeleconsultationReceipt">
+            <li className=" flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <LuReceipt  className="mr-2"/>
+            Teleconsultation Receipt
+            </li>
+            </NavLink>
+
+            <NavLink to="/ExternalDocDownload">
+            <li className=" flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <GrDocumentDownload  className="mr-2" /> 
+            External Doc Download
+            </li>
+            </NavLink>
+
+            <NavLink to="/FinalBill">
+            <li className="flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <RiBillFill  className="mr-2" />  
+            Final Bill
+            </li>
+            </NavLink>
+
+            <NavLink to="/ChangePassword">
+            <li className=" flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <FaKey  className="mr-2" />
+            Change Password
+            </li>
+            </NavLink>
+
+            <NavLink to="/DeactivateAccount">
+            <li className="flex items-center px-4 py-4 text-white hover:bg-[#4fd1c5] hover:text-black cursor-pointer">
+            <TbUserOff className="mr-2"/>
+            Deactivate Account
+            </li>
+            </NavLink>
+
+            <button className="flex items-center px-4 py-4 pb-4 text-white cursor-pointer" onClick={handleLogout} > 
+            <TbUserOff  className="mr-2" />  
+            Logout
+            </button>
+          </ul>
+        </nav>
+
+        <div>
+                <main className="flex-grow bg-white text-[#005457] overflow-x-auto">
+                    {children}
+                </main>
+        </div> {/* Main Content */}     
+    </div>
+  );
+}
+
+export default Sidebar;
