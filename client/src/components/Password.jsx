@@ -66,11 +66,11 @@ function submitHandler(e) {
     console.log(username)
     console.log(matchPassword)
     console.log(formData.password)
-    navigate("/");
+    navigate("/login");
 }
 
     return(
-        <div className="flex relative  h-screen bg-no-repeat bg-cover  " style={{ backgroundImage: `url(${background})`}}>
+        <div className="flex relative w-full h-screen bg-no-repeat bg-cover  " style={{ backgroundImage: `url(${background})`}}>
 
             <div className="flex  my-auto bg-white border rounded-lg p-2 mx-auto ">
                  {/* left secttion */}
@@ -114,7 +114,7 @@ function submitHandler(e) {
                             type={showConfirmPassword?("text"):("password")}
                             required
                             name="password"
-                            placeholder="password"
+                            placeholder="Confirm Password"
                             value={formData.password}
                             onChange={changeHandler}
                             className="border  rounded-[0.5rem]  w-full p-3"

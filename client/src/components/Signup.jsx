@@ -15,10 +15,12 @@ const Signup = ({ setMobileNumber, setUserExists }) => {
 
 
     const[formData,setFormData] = useState ({
-        "titleId": 101,
+        // "titleId": 101,
+        "titleId": " ",
         "firstName": "",
         "lastName": "",
-        "genderId": "1001",
+        // "genderId": "1001",
+        "genderId": "",
         "dob": "",
         "mobileNumber": "",
         "email": "",
@@ -28,6 +30,7 @@ const Signup = ({ setMobileNumber, setUserExists }) => {
         "stateId": "",
         "countryId": "",
         "pincode":""
+        
     })
 
     useEffect(() => {
@@ -38,6 +41,7 @@ const Signup = ({ setMobileNumber, setUserExists }) => {
     fetchCountries();
     },
     []);
+    
 
 const fetchTitles = async () => {
 try {
@@ -104,18 +108,56 @@ try {
         if(name === 'stateId') {
             fetchCities(value);
         }
+
+    let updatedValue = value;
+
+    // Capitalize the first letter of each word in "First Name" and "Last Name" ,Address State,CountryId
+    if (name === "firstName" || name === "lastName" || name === "address") {
+        updatedValue = value
+            .toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
+
+    // Update the form data
+    setFormData(prev => ({
+        ...prev,
+        [name]: updatedValue
+    }));
+
+    // Validation
+    if ((name === "firstName" || name === "lastName") && value.trim() === '') {
+        toast.error(`${name === "firstName" ? "First" : "Last"} Name cannot be empty`);
+    }
+
+    // Other handlers...
 }
 
+// const handleMobileNumberChange = (e) => {
+//     const { value } = e.target;
+//     setFormData((prev) => ({
+//     ...prev,
+//     mobileNumber: value,
+//     }));
+// // Pass mobileNumber to the parent component (App)
+//     setMobileNumber(value);
+// };
+
 const handleMobileNumberChange = (e) => {
-    const { value } = e.target;
+    let value = e.target.value;
+    // Remove any non-numeric characters
+    value = value.replace(/\D/g, '');
+    // Update the state
     setFormData((prev) => ({
-    ...prev,
-    mobileNumber: value,
+        ...prev,
+        mobileNumber: value,
     }));
     // Pass mobileNumber to the parent component (App)
     setMobileNumber(value);
 };
 
+  
 
 function submitHandler(e) {
     e.preventDefault();
@@ -181,6 +223,7 @@ function submitHandler(e) {
                                 value={formData.titleId}
                                 className="border rounded-[0.5rem]  w-full p-2.5" 
                                 >
+                                    <option>Select Title</option>
                                     {titles.map(title => (
                                     <option key={title.titleId} value={title.titleId}>{title.title}</option>
                                     ))}
@@ -228,6 +271,7 @@ function submitHandler(e) {
                             value={formData.genderId}
                             className="border rounded-[0.5rem]  w-full p-2.5" 
                             >
+                                <option>Select Gender</option>
                                 {genders.map(gender => (
                                 <option key={gender.genderId} value={gender.genderId}>{gender.gender}</option>
                                 ))}
@@ -259,7 +303,9 @@ function submitHandler(e) {
                             // onChange={changeHandler}
                             // placeholder="Enter Mobile No."
                             // value={formData.mobileNumber}
-                            type="text"
+                            type="tel"
+                            inputMode="numeric"
+                            maxLength={10}
                             name="mobileNumber"
                             value={formData.mobileNumber}
                             onChange={handleMobileNumberChange}
@@ -308,7 +354,7 @@ function submitHandler(e) {
                             name="countryId"
                             value={formData.countryId}
                             className="border rounded-[0.5rem]  w-full p-2.5" 
-                            >
+                            ><option>Select Country</option>
                                 {
                                     countries.map(country => (
                                     <option key={country.countryId} value={country.countryId}>{country.name}</option>
@@ -319,14 +365,15 @@ function submitHandler(e) {
 
                     <div className="my-[10px]">
                         <label>
-                            <p className="text-[0.875rem] m-1 leading-[1.376rem] text-base">state<sup className="text-rose-700 text-sm">*</sup></p>
+                            <p className="text-[0.875rem] m-1 leading-[1.376rem] text-base">State<sup className="text-rose-700 text-sm">*</sup></p>
                             <select
                             type="dropdown"
                             onChange={changeHandler}
                             name="stateId"
                             value={formData.stateId}
-                            className="border rounded-[0.5rem]  w-full p-2.5"
+                            className="border rounded-[0.5rem] w-full p-2.5"
                         >
+                        <option>Select State</option>
                             {states.map(state => (
                                 <option key={state.stateId} value={state.stateId}>{state.name}</option>
                             ))}
@@ -364,23 +411,21 @@ function submitHandler(e) {
                             value={formData.cityId}
                             className="border rounded-[0.5rem]  w-full p-2.5"
                             >
+                                <option>Select City</option>
                             {cities.map(city => (
                                 <option key={city.cityId} value={city.cityId}>{city.name}</option>
                             ))}
                             </select>
                         </label>
                     </div>
-                        
-
-
-
 
                     <div className="my-[10px]">
                         <label>
                             <p  className="text-[0.875rem] m-1 leading-[1.376rem] text-base">Pincode<sup className="text-rose-700 text-sm">*</sup></p>
                             <input
                             required
-                            type="text"
+                            type="number"
+                            maxLength={6}
                             name="pincode"
                             onChange={changeHandler}
                             placeholder="Enter Pincode"

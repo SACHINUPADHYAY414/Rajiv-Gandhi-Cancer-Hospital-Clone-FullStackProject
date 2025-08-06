@@ -10,7 +10,7 @@ const Profile = ({ token, id }) => {
     mobile: "",
     address: ""
   });
-  const [editMode, setEditMode] = useState(false); // State to track edit mode
+  const [editMode, setEditMode] = useState(false); 
 
   useEffect(() => {
     fetchPatientDetails();
@@ -67,7 +67,7 @@ const Profile = ({ token, id }) => {
         {/* User Id */}
         <div className="border border-gray-300 p-3 rounded-lg flex">
           <label className="text-lg font-bold">
-            User Id:
+           UHID:
           </label>
           <p className="text-[0.875rem] m-1 leading-[1.376rem] text-base flex-1">{formData.userId}</p>
         </div>

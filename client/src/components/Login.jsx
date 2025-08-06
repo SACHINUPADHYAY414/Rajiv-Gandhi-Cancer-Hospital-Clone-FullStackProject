@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Login = ({mobileNumber, handleLogin}) => {
+const Login = ({username, handleLogin}) => {
 
     const[formData,setFormData] = useState({
         username:"",password:""
@@ -32,19 +32,33 @@ const Login = ({mobileNumber, handleLogin}) => {
 // };
 
 
-    function changeHandler(e){
-        const{name,value}=e.target
-        setFormData((prev) => {
-            return{
-                ...prev,
-                [name]:value
+    function changeHandler(e) {
+        const { name, value } = e.target;
+        
+        if (name === "username") {
+            // Only allow numeric characters for the username field
+            if (!/^\d*$/.test(value)) {
+                // If non-numeric characters are entered, do not update the state
+                toast.error("Please enter a valid mobile number.");
+                return;
             }
-        })
-            if(name === "username"){
-            setIsValid(/^\d{10}$/.test(value));
-        }
+            
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value
+            }));
     
+            setIsValid(/^\d{10}$/.test(value));
+        } else {
+            // For other fields (like password), update the state directly
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     }
+    
+    
 
 async function submitHandler(e) {
     e.preventDefault();
@@ -58,6 +72,7 @@ async function submitHandler(e) {
         const response = await axios.post("http://localhost:8080/login", data);
         const token = response.data.jwtToken;
         console.log(response);
+        console.log("JWT Token:", token); 
         handleLogin(token);
         // setPatients(response.data);
         e.target.reset();
@@ -67,24 +82,25 @@ async function submitHandler(e) {
             return;
         } else {
             toast.success("Logged In");
-            navigate("/patient");
+            navigate("/patients");
             console.log("form submitted", formData);
         }
     } catch (err) {
-    console.log("error due to ", err);
+        toast.error("smothing went wrong...");
+        console.log("error due to ", err);
     }
 }
 
     return (
-        <div className="flex relative h-screen w-full bg-cover overscroll-y-contain justify-end bg-center "style={{ backgroundImage: `url(${background})`}}>
-            <div className="w-full md:w-4/6 lg:w-1/4 flex bg-white flex-col justify-center items-center border m-2  rounded-md p-5 lg:p-10 ">
+        <div className="flex relative  h-screen bg-no-repeat bg-cover  " style={{ backgroundImage: `url(${background})`}}>
+        <div className=" flex flex-col mx-auto my-auto items-center border rounded-lg p-8 bg-white" >
                 {/* heading hai bhai ye */}
                 <div className="relative flex flex-col  items-center">
                     <img src={logo} alt="Logo" className="aspect-square w-20 h-20 pt-2"/>
                     <h2 className="text-sm md:text-xl lg:text-3xl font-bold">
                         Welcome to RGCIRC
                     </h2>
-                    <p className="text-stone-500">Please enter Your details</p>
+                    <p className="text-stone-500">Please Enter Your Details</p>
                 </div>
                 <form 
                 // action="http://192.168.25.187:8080/login"
@@ -94,16 +110,22 @@ async function submitHandler(e) {
                     {/* mobile no and password */}
                     <div className="relative flex flex-col  pt-4">
                         <label className="w-full mb-2">
-                            <p className="text-[0.875rem] m-1 leading-[1.376rem] text-base">Mobile No.<sup className="text-rose-700 text-sm">*</sup></p>
+                            <p className="text-[0.875rem] m-1 leading-[1.376rem] text-base">Mobile No<sup className="text-rose-700 text-sm">*</sup></p>
+
                             <input
-                            type="tel"
-                            required
-                            name="username"
-                            placeholder="Enter your Mobile No."
-                            value={formData.username}
-                            onChange={changeHandler}
-                            className="border rounded-[0.5rem]  w-full p-[12px] "
+                                type="tel"
+                                pattern="[0-9]{10}" 
+                                inputMode="numeric"
+                                required
+                                maxLength="10"
+                                name="username"
+                                placeholder="Enter Mobile Number"
+                                value={formData.username}
+                                onChange={changeHandler}
+                                className="border rounded-[0.5rem] w-full p-[12px]"
                             />
+
+
                         </label>
                         
                         <label className="w-full mb-2">
@@ -127,11 +149,11 @@ async function submitHandler(e) {
                             onClick={() => setShowPassword((prev)=>!prev)}>
                                 {showPassword?(<AiOutlineEyeInvisible fontSize={20}/>):(<AiOutlineEye fontSize={20} />)}                            
                             </span>
-                            <span
+                            {/* <span
                             className=" hidden lg:block absolute right-3 top-[151px] cursor-pointer "
                             onClick={() => setShowPassword((prev)=>!prev)}>
                                 {showPassword?(<AiOutlineEyeInvisible fontSize={20}/>):(<AiOutlineEye fontSize={20} />)}                            
-                            </span>
+                            </span> */}
                         </label>
 
                             {/* <label  >
@@ -151,7 +173,7 @@ async function submitHandler(e) {
                     </div>
                         <Link to="/ForgetPassword"
                         className="flex justify-end text-sm  text-blue-800 hover:font-bold"
-                        >forgot Password?</Link>
+                        >Forgot Password?</Link>
 
                     <button 
                     // type="submit" 

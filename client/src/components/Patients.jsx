@@ -33,6 +33,7 @@ const navigate = useNavigate();
 
        // Update patients state with fetched data
     } catch (error) {
+      toast.error("Patient Not Avilable On this Mobile Number ");
       console.log('Error fetching Patients:', error);
     }
   };
@@ -51,9 +52,10 @@ const navigate = useNavigate();
     console.log("submitted form :", formData);
     navigate("/Sidebar/Dashboard");
   }
+  
 
   return (
-    <div className="flex relative h-screen bg-no-repeat bg-cover" style={{ backgroundImage: `url(${background})` }}>
+    <div className="flex relative h-screen w-full bg-no-repeat bg-cover" style={{ backgroundImage: `url(${background})` }}>
       <div className="flex flex-col mx-auto my-auto items-center border rounded-lg p-8 bg-white">
         <img src={image} className="aspect-square w-16 h-16 pt-2" alt="logo" />
         <h3 className="flex flex-col mx-auto mt-8 mb-1 text-2xl"> Select the Patient</h3>

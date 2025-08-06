@@ -1,13 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
+import axios from 'axios';
+import AppointmentTable from './MyAppointment';
 
-const TelemedicineAppointment = () => {
+const TelemedicineAppointment = ({ userId, token }) => {
   const [location, setLocation] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [clinician, setClinician] = useState('');
   const [appointments, setAppointments] = useState([]);
+  const [bookedAppointment, setBookedAppointment] = useState(null);
 
   const handleLocationChange = (event) => {
     setLocation(event.target.value);
@@ -24,6 +26,24 @@ const TelemedicineAppointment = () => {
   const bookAppointment = (appointmentId) => {
     // Logic to book appointment with the given ID
     console.log("Booking appointment with ID:", appointmentId);
+
+    // Make a POST request to book the appointment
+    axios.post('http://localhost:8080/bookAppointment', {
+      appointmentId,
+      userId
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      console.log("Appointment booked successfully:", response.data);
+      // Update state to reflect the booked appointment
+      setBookedAppointment(response.data);
+    })
+    .catch(error => {
+      console.error('Error booking appointment:', error);
+    });
   };
 
   useEffect(() => {
@@ -39,7 +59,11 @@ const TelemedicineAppointment = () => {
         });
     }
   }, [location, clinician, selectedDate]);
-  
+
+  // Render AppointmentTable if appointment is booked
+  if (bookedAppointment) {
+    return <AppointmentTable appointment={bookedAppointment} />;
+  }
 
   const maxDate = new Date(2050, 11, 31);
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/original";
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import TelemedicineAppointment from './pages/TelemedicineAppointment';
@@ -18,6 +18,7 @@ import ChangePassword from './pages/ChangePassword';
 import DeactivateAccount from './pages/DeactivateAccount';
 import TakeAppointments from './pages/TakeAppointments';
 
+
 const PrivateRouteSidebar = ({ isAuthenticated, Uid, token ,id }) => {
   if (!isAuthenticated) {
     // Redirect to login page if not authenticated
@@ -31,9 +32,9 @@ const PrivateRouteSidebar = ({ isAuthenticated, Uid, token ,id }) => {
         
         <Route path="/Profile" element={<Profile  Uid={Uid} token={token} id={id} />} />
         <Route path="/TakeAppointments" element={<TakeAppointments />} />
-        <Route path="/TelemedicineAppointment" element={<TelemedicineAppointment />} />
-        <Route path="/InPersonAppointment" element={<InPersonAppointment />} />
-        <Route path="/MyAppointment" element={<MyAppointment />} />
+        <Route path="/TelemedicineAppointment" element={<TelemedicineAppointment Uid={Uid} token={token} id={id} />} />
+        <Route path="/InPersonAppointment" element={<InPersonAppointment Uid={Uid} token={token} id={id} />} />
+        <Route path="/MyAppointment" element={<MyAppointment Uid={Uid} token={token} id={id} />} />
         <Route path="/ViewRadiologyReports" element={<ViewRadiologyReports />} />
         <Route path="/ViewLabReports" element={<ViewLabReports />} />
         <Route path="/ViewDischargeSummary" element={<ViewDischargeSummary />} />
@@ -42,8 +43,9 @@ const PrivateRouteSidebar = ({ isAuthenticated, Uid, token ,id }) => {
         <Route path="/TeleconsultationReceipt" element={<TeleconsultationReceipt />} />
         <Route path="/FinalBill" element={<FinalBill />} />
         <Route path="/ExternalDocDownload" element={<ExternalDocDownload />} />
-        <Route path="/ChangePassword" element={<ChangePassword />} />
-        <Route path="/DeactivateAccount" element={<DeactivateAccount />} />
+        <Route path="/ChangePassword" element={<ChangePassword Uid={Uid} token={token} id={id}/>} />
+        <Route path="/DeactivateAccount" element={<DeactivateAccount Uid={Uid} token={token} id={id}/>} />
+        
       </Routes>
       
     </Sidebar>

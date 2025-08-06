@@ -27,7 +27,7 @@ const Deactivate = ( ) => {
     }
     
     return(
-        <div className="flex relative h-screen w-screen bg-cover overscroll-y-contain justify-center bg-center rounded-md" style={{ backgroundImage: `url(${background})`}}>
+        <div className="flex relative h-screen w-full bg-cover overscroll-y-contain justify-center bg-center rounded-md" style={{ backgroundImage: `url(${background})`}}>
             <div className="md:w-4/6 lg:w-2/6 flex bg-white my-auto flex-col justify-center items-center border m-3 rounded-md p-4">
                 <h3 className="flex flex-col mx-auto mt-2 mb-3 text-2xl">
                     Deactivate Account

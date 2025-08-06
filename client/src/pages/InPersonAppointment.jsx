@@ -1,122 +1,165 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
+import axios from 'axios';
+import AppointmentTable from './MyAppointment';
 
-const InPersonAppointment = () => {
+const InPersonAppointment = ({ userId, token }) => {
   const [location, setLocation] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [department, setDepartment] = useState('');
+  const [departmentList, setDepartmentList] = useState([]);
+  
   const [clinician, setClinician] = useState('');
   const [appointments, setAppointments] = useState([]);
-  const [token, setToken] = useState('');
+  const [bookedAppointment, setBookedAppointment] = useState(null);
+  const [cliniciansList, setCliniciansList] = useState([]);
+  const [showTable, setShowTable] = useState(false);
+
+  const showTableHandler = () => {
+    setShowTable(!showTable);
+  };
 
   const handleLocationChange = (event) => {
     setLocation(event.target.value);
+    // Reset department and clinician when location changes
+    setDepartment('');
+    setClinician('');
   };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
+  const handleDepartmentChange = (event) => {
+    setDepartment(event.target.value);
+    // Reset clinician when department changes
+    setClinician('');
+  };  
+
   const handleClinicianChange = (event) => {
     setClinician(event.target.value);
   };
 
+
   const bookAppointment = (appointmentId) => {
-    fetch(`http://192.168.25.187:8080/book-appointment`, {
-      method: 'POST',
+    // Logic to book appointment with the given ID
+    console.log("Booking appointment with ID:", appointmentId);
+  
+    // Make a POST request to book the appointment
+    axios.post('http://localhost:8080/bookAppointment', {
+      appointmentId,
+      userId
+    }, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` // Include bearer token in the authorization header
-      },
-      body: JSON.stringify({
-        appointmentId: appointmentId,
-        // Include any other necessary data, like user details
-      }),
+        Authorization: `Bearer ${token}`
+      }
     })
-      .then(response => {
-        if (response.ok) {
-          // Appointment booked successfully, update UI or take any other action
-          console.log("Appointment booked successfully");
-        } else {
-          // Handle errors
-          console.error('Failed to book appointment:', response.statusText);
-        }
-      })
-      .catch(error => {
-        console.error('Error booking appointment:', error);
-      });
+    .then(response => {
+      console.log("Appointment booked successfully:", response.data);
+      // Update state to reflect the booked appointment
+      setBookedAppointment(response.data);
+    })
+    .catch(error => {
+      console.error('Error booking appointment:', error);
+    });
   };
   
   useEffect(() => {
-    if (location && selectedDate && clinician) {
-      // Fetch appointments from the API
-      fetch(`http://192.168.25.187:8080/api/appointments?location=${location}&date=${selectedDate.toString()}&clinician=${clinician}`, {
+    if (location) {
+      // Fetch clinicians from the API based on location
+      axios.get(`http://localhost:8080/api/clinicians?location=${location}`, {
         headers: {
-          'Authorization': `Bearer ${token}` // Include bearer token in the authorization header
+          Authorization: `Bearer ${token}`
         }
       })
-        .then(response => response.json())
-        .then(data => {
-          setAppointments(data);
-        })
-        .catch(error => {
-          console.error('Error fetching appointments:', error);
-        });
+      .then(response => {
+        setCliniciansList(response.data); 
+      })
+      .catch(error => {
+        console.error('Error fetching clinicians:', error);
+      });
     }
-  }, [location, clinician, selectedDate, token]);
+  }, [location, token]);
   
+  useEffect(() => {
+    if (department) {
+      // Fetch department from the API based on department
+      axios.get(`http://localhost:8080/api/department?department=${department}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        setDepartmentList(response.data); 
+      })
+      .catch(error => {
+        console.error('Error fetching department:', error);
+      });
+    }
+  }, [department, token]);
+  
+
+  useEffect(() => {
+    if (location && selectedDate && clinician) {
+      // Fetch appointments from the API
+      fetchAppointments();
+    }
+  }, [location, clinician, selectedDate]);
+
+  const fetchAppointments = () => {
+    fetch(`http://localhost:8080/api/appointments?location=${location}&date=${selectedDate.toISOString()}&clinician=${clinician}`)
+      .then(response => response.json())
+      .then(data => {
+        setAppointments(data);
+      })
+      .catch(error => {
+        console.error('Error fetching appointments:', error);
+      });
+  };
+
   const maxDate = new Date(2050, 11, 31);
 
   return (
-    <main className="w-full h-full text-sm text-[#005457] justify-center flex-grow-1 px-0 overflow-x-auto">
-      <div className='InPerson Appointment'>
-        <h1 className="text-3xl font-bold mb-4 text-center">InPerson Appointment</h1>
+    <main className="main-content text-[#005457] w-full h-full text-sm justify-center flex-grow-1 px-0 overflow-x-auto">
+      <div className='InPersonAppointment'>
+        <h1 className="text-3xl font-bold mb-4 text-center underline">InPerson Appointment</h1>
         <div className='location mb-4 px-5 '>
           <label className="mr-2 font-bold text-[20px]">Location:</label>
-          <select className="  w-28 rounded border-2 " value={location} onChange={handleLocationChange}>
+          <select className="w-28 rounded border-2" value={location} onChange={handleLocationChange}>
             <option value="">Select Location</option>
             <option value="Rohini">Rohini</option>
             <option value="NitiBagh">NitiBagh</option>
           </select>
         </div>
 
-        {location === 'Rohini' && (
+        {location && (
+          <div className='department mb-4 px-5 '>
+            <label className="mr-2 font-bold text-[20px]">Department:</label>
+            <select className="w-28 rounded border-2" value={department} onChange={handleDepartmentChange}>
+              <option value="">Select Department</option>
+              {departmentList.map(department => (
+                <option key={department.id} value={department.name}>{department.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {department && (
           <div className='Clinician mb-4 px-5'>
             <label className="mr-2 font-bold text-[20px]">Clinician: </label>
-            <select className=" w-28 rounded border-2" value={clinician} onChange={handleClinicianChange}>
+            <select className="w-28 rounded border-2" value={clinician} onChange={handleClinicianChange}>
               <option value="">Select Consultant</option>
-              <option value="Dr. Alok Kalyani/Tarun">Dr. Alok Kalyani/Tarun</option>
-              <option value="Dr. Anjali Pahuja">Dr. Anjali Pahuja </option>
-              <option value="Dr. Ashutosh ">Dr. Ashutosh </option>
-              <option value="Dr. C.R Jain/Nitin/Aakash/Sueet ">Dr. C.R Jain/Nitin/Aakash/Sueet </option>
-              <option value="Dr. Ct Appointments">Dr. Ct Appointments </option>
-              <option value="Dr. D.C Doval/Pankaj ">Dr. D.C Doval/Pankaj </option>
-              <option value="Dr. Dinesh Bhurani/Rohan/Roy ">Dr. Dinesh Bhurani/Rohan/Roy </option>
-              <option value="Dr. Gauri Kapoor/Sandeep/Payal ">Dr. Gauri Kapoor/Sandeep/Payal </option>
-              <option value="Dr. Himanshu Rohela ">Dr. Himanshu Rohela </option>
-              <option value="Dr. I.C Premsagar ">Dr. I.C Premsagar </option>
+              {cliniciansList.map(clinician => (
+                <option key={clinician.id} value={clinician.name}>{clinician.name}</option>
+              ))}
             </select>
           </div>
         )}
 
-       {location === 'NitiBagh' && (
-      <div className='Clinician mb-4 px-5'>
-        <label className="mr-2 font-bold text-[20px]">Clinician: </label>
-        <select className=" w-28 rounded border-2" value={clinician} onChange={handleClinicianChange}>
-          <option value="">Select Consultant</option>
-               <option value="Dr. A.K Dewan">Dr. A.K Dewan</option>
-               <option value="Dr. Anjali Pahuja">Dr. Anjali Pahuja</option>
-               <option value="Dr. Anurag Shrikant Deshpanday">Dr. Anurag Shrikant Deshpanday</option>
-               <option value="Dr. D.C Doval">Dr. D.C Doval </option>
-               <option value="Dr. Dinesh Bhurani">Dr. Dinesh Bhurani </option>
-               <option value="Dr Dinesh Bhurani/Rohan">Dr Dinesh Bhurani/Rohan </option>
-               <option value="Dr. Gauri Kappor">Dr. Gauri Kappor </option>
-            </select>
-          </div>
-        )}
-
-        <div className='AppointmentDate mb-4 px-5'>
+        <div className='AppointmentDate mb-5 px-5 flex'>
           <label className="mr-2 font-bold text-[20px]">Appointment Date: </label>
+          <div className='flex space-x-4'>
           <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
@@ -126,20 +169,28 @@ const InPersonAppointment = () => {
             scrollableYearDropdown
             yearDropdownItemNumber={50}
             dropdownMode="select"
-            className=" w-28 rounded border-2 text-center"
+            className="w-28 rounded border-2 text-center"
             required
           />
+          <button className='border text-black border-gray-50 rounded-full px-3 text-center' onClick={showTableHandler}>
+            {showTable ? 'Hide' : 'Show'} Table
+          </button>
+          {/* <button className='border text-black border-gray-50 rounded-full px-3 text-center' onClick={ShowTableHandler}>Show</button> */}
+          </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-2 text-center font-bold px-10 py-10">
-          <div className="rounded-lg bg-green-500 py-2 sm:py-4 md:py-2">Available Slot</div>
-          <div className="rounded-lg bg-red-500 py-2 sm:py-4 md:py-2">Booked Slot</div>
-          <div className="rounded-lg bg-yellow-400 py-2 sm:py-4 md:py-2">Overbooking Slot</div>
-          <div className="rounded-lg bg-blue-600 py-2 sm:py-4 md:py-2">Blocked Slot</div>
+        
+        <div className='justify-center items-center m-auto '>
+            <ul className='flex grid-cols-4 space-x-3 justify-center items-center m-auto  text-2xl text-black mt-2 mb-2 '>
+              <li className='px-1 py-1 border border-gray-500 bg-green-500 rounded-l-3xl'>Avalilable Slot</li>
+              <li className='px-1 py-1 border border-gray-500 bg-red-400 rounded-b-3xl'>Booked Slot</li>
+              <li className='px-1 py-1 border border-gray-500 bg-yellow-500 rounded-t-3xl'>Overbooking Available Slot</li>
+              <li className='px-1 py-1 border border-gray-500 bg-red-600  rounded-r-3xl'>Blocked Slot</li>
+            </ul>
         </div>
-
-        {location && clinician && selectedDate && (
-            <div className="flex justify-center">
-            <table className="w-[80%] mb-2 border border-1 border-black bg-green-200">
+        
+        {location && clinician && selectedDate && showTable && (
+          <div className="flex justify-center">
+            <table className="w-[80%] mb-2 border border-1 border-black bg-green-200"id='table'>
               <thead>
                 <tr className='border border-collapse border-1 border-black'>
                   <th className="lg:px-4 px-1 md:px-0 py-2 border border-collapse border-1 border-black">Location</th>
@@ -165,10 +216,11 @@ const InPersonAppointment = () => {
                 ))}
               </tbody>
             </table>
-            </div>
-          )}
           </div>
-          </main>
-          );
-          };
+        )}
+      </div>
+    </main>
+  );
+};
+
 export default InPersonAppointment;

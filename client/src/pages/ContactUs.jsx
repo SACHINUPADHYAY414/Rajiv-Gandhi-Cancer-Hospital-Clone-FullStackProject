@@ -188,17 +188,17 @@ const ContuctUs = () => {
                                                 <label htmlFor="textarea" className="pb-1 text-xs uppercase tracking-wider"></label><textarea id="textarea" name="textarea" cols="30" rows="5" placeholder="Write your message..." className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"></textarea>
                                             </div>
 
-                                            <div className="mb-4">
-                                                <label className="block text-md font-bold text-gray-700">Upload your Report</label>
+                                            <div className="mx-0 mb-1 sm:mb-4">
+                                                <label className="block text-md mb-2 font-bold text-gray-700">Upload your Report</label>
                                                 <input
                                                     type="file"
                                                     id="file"
                                                     accept=".pdf, .doc, .docx, .jpg, .jpeg, .png"
                                                     onChange={handleFileChange}
-                                                    className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
+                                                    className=" w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
                                                     name="file"
                                                 />
-                                                <p className="text-xs text-red-600 font-semibold">The file size limit for document is 8MB. Accepted file types: .pdf |.doc | .docx | jpg | jpeg | png File Upload</p>
+                                                <p className="text-xs text-red-600 py-2 ml-3 font-semibold">The file size limit for document is 8MB. Accepted file types: .pdf |.doc | .docx | jpg | jpeg | png File Upload</p>
                                             </div>
 
                                         </div>

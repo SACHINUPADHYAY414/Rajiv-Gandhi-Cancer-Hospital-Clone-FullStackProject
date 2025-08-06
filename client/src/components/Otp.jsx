@@ -8,13 +8,11 @@ const Otp = ({userExists}) => {
 
 // console.log(userExists)
 
-    
     const [formData,setFormData] = useState({
         otp:""
     })
     const navigate = useNavigate ();
     const [isValid,setIsValid] = useState(true)
-
 
 function changeHandler(e) {
     const{name,value}=e.target
@@ -30,8 +28,6 @@ function changeHandler(e) {
         }
 }
 
-
-
 function submitHandler(e){
     e.preventDefault();
     // if(formData.value!==""){
@@ -46,7 +42,7 @@ function submitHandler(e){
             if (userExists) {
                 navigate("/");
             } else {
-                navigate("/Password");
+                navigate("/password");
             }
             console.log("form submitted", formData);
         }
@@ -55,10 +51,8 @@ function submitHandler(e){
 const clickHandler = () => {
     navigate(-1); 
 };
-
-
     return(
-        <div className="flex relative h-screen w-screen bg-cover overscroll-y-contain justify-center bg-center" style={{ backgroundImage: `url(${background})`}}>
+        <div className="flex relative h-screen w-full bg-cover overscroll-y-contain justify-center bg-center" style={{ backgroundImage: `url(${background})`}}>
             <div className="md:w-4/6 lg:w-1/4 flex bg-white my-auto flex-col justify-center items-center border m-2 rounded-md p-2">
                 <div className="flex flex-col mb-4 pb-6">
                 {/* image or bakwas */}
@@ -80,12 +74,13 @@ const clickHandler = () => {
                 <div className="flex flex-col mx-auto justify-center w-1/2 mt-4 pt-2">
                     <form onSubmit={submitHandler} className="flex flex-col mx-auto justify-center">
                         <input
-                        type="text" // Set type to "text"
-                        inputMode="numeric" // Set input mode to "numeric"
-                        pattern="[0-9]*" // Set pattern to allow only numeric input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         required
                         name="otp"
-                        placeholder="Enter OTP"
+                        maxLength="6"
+                        placeholder="Enter Otp"
                         value={formData.otp}
                         onChange={changeHandler}
                         onKeyDown={(e) => {
@@ -100,7 +95,6 @@ const clickHandler = () => {
                         <button className="w-full bg-[#03DAC5] hover:bg-teal-500 text-[#005457] border rounded-md p-3  text-lg font-bold my-4">
                         Verify
                         </button>
-
                         
                     </form>
                 </div>
